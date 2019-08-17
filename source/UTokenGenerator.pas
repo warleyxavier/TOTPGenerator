@@ -3,7 +3,7 @@ unit UTokenGenerator;
 interface
 
 uses
-  SysUtils, DateUtils, IdGlobal, IdHMACSHA1,
+  SysUtils, DateUtils, Math, IdGlobal, IdHMACSHA1,
 
   UCoderBase32, UTokenHashGenerator;
 
@@ -13,6 +13,14 @@ type
 
   ITokenGenerator = interface
     ['{820474D2-0BBE-4454-8EE9-DBE408834FB9}']
+
+    function Generate(): string; overload;
+    function Generate(const DateTimeToCalculate: TDateTime): string; overload;
+    function Generate(const TokenDurationInSeconds: Integer): string; overload;
+    function Generate(const DateTimeToCalculate: TDateTime; const TokenDurationInSeconds: Integer): string; overload;
+
+    procedure Validate(const Token: string);
+
   end;
 
   TTokenGenerator = class(TInterfacedObject, ITokenGenerator)
@@ -66,8 +74,9 @@ end;
 
 function TTokenGenerator.GenerateToken(const DateTimeToCalculate: TDateTime; const TokenDurationInSeconds: Integer): string;
 var
-  TimeProcessed: Integer;
+  TimeProcessed, Offset, Part1, Part2, Part3, Part4, CompiledKey: Integer;
   KeyEncoded, TokenHash: string;
+  Token: Integer;
 begin
 
   if (TokenDurationInSeconds < 0) then
@@ -79,7 +88,16 @@ begin
 
   TokenHash := TTokenHasGenerator.Generate(KeyEncoded, TimeProcessed);
 
-  Result := '';
+  Offset := (ord(TokenHash[20]) AND $0F) + 1;
+  Part1 := (ord(TokenHash[Offset + 0]) AND $7F);
+  Part2 := (ord(TokenHash[Offset + 1]) AND $FF);
+  Part3 := (ord(TokenHash[Offset + 2]) AND $FF);
+  Part4 := (ord(TokenHash[Offset + 3]) AND $FF);
+
+  CompiledKey := (Part1 shl 24) OR (Part2 shl 16) OR (Part3 shl 8) OR (Part4);
+  Token := CompiledKey mod Trunc(IntPower(10, 6));
+
+  Result := Token.ToString();
 
 end;
 

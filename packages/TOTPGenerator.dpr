@@ -9,8 +9,17 @@ uses
 
 {$R *.res}
 
-function GenerateTOTP(const SecretKey: PAnsiChar; const DurationTime: Integer = -1): PAnsiChar; export; stdcall;
+function GenerateTOTP(const SecretKey: PAnsiChar; const DurationTime: Integer = 30): PAnsiChar; export; stdcall;
+var
+  Token: string;
+  Generator: ITokenGenerator;
 begin
+
+  Generator := TTokenGenerator.Create(string(SecretKey));
+
+  Token := Generator.Generate(DurationTime);
+
+  Result := PAnsiChar(Token);
 
 end;
 

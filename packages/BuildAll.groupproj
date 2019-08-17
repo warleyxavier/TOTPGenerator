@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{C62CDA67-C817-45E0-AB2A-5246069215A2}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="TOTPGenerator.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="TOTPGeneratorExample.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TOTPGenerator">
+        <MSBuild Projects="TOTPGenerator.dproj"/>
+    </Target>
+    <Target Name="TOTPGenerator:Clean">
+        <MSBuild Projects="TOTPGenerator.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TOTPGenerator:Make">
+        <MSBuild Projects="TOTPGenerator.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TOTPGeneratorExample">
+        <MSBuild Projects="TOTPGeneratorExample.dproj"/>
+    </Target>
+    <Target Name="TOTPGeneratorExample:Clean">
+        <MSBuild Projects="TOTPGeneratorExample.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TOTPGeneratorExample:Make">
+        <MSBuild Projects="TOTPGeneratorExample.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TOTPGenerator;TOTPGeneratorExample"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TOTPGenerator:Clean;TOTPGeneratorExample:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TOTPGenerator:Make;TOTPGeneratorExample:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
